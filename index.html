@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="void">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNTOKENED [0x0000null]</title>
+    <style>
+        :root {
+            --glow: #0ff;
+            --void: #111;
+            --static: #222;
+            --error: #f05;
+            --text: #ddd;
+            --border: #333;
+        }
+        
+        @font-face {
+            font-family: 'Terminal';
+            src: url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap');
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inconsolata', monospace;
+        }
+        
+        body {
+            background-color: var(--void);
+            color: var(--text);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 255, 255, 0.02) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 85, 0.02) 0%, transparent 20%);
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .glitch-effect {
+            position: relative;
+        }
+        
+        .glitch-effect::before, .glitch-effect::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+        
+        .glitch-effect::before {
+            color: var(--glow);
+            z-index: -1;
+            animation: glitch 3s infinite;
+        }
+        
+        .glitch-effect::after {
+            color: var(--error);
+            z-index: -2;
+            animation: glitch 2s infinite reverse;
+        }
+
+        .terminal {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1rem;
+            margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+                .top-right-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+                @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+                        .top-right-links {
+                margin-top: 1rem;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+                    .social-link {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+        
+        .terminal::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent,
+                transparent 50%,
+                rgba(0, 255, 255, 0.05) 50%,
+                rgba(0, 255, 255, 0.05)
+            ;
+            background-size: 100% 8px;
+            pointer-events: none;
+        }
+        
+        .cursor {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--glow);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .logo-text span {
+            color: var(--error);
+        }
+        
+
+        
+        .social-link {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+        
+        .social-link:hover {
+            color: var(--glow);
+        }
+        
+        .social-link.twitter::before {
+            content: "🐦";
+            font-size: 0.9rem;
+        }
+        
+        .social-link.ca::before {
+            content: "📄";
+            font-size: 0.9rem;
+        }
+        
+        .wallet-btn {
+            background: transparent;
+            color: var(--glow);
+            border: 1px solid var(--glow);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .wallet-btn:hover {
+            background-color: rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        
+        nav ul li a {
+            color: var(--text);
+            text-decoration: none;
+            position: relative;
+        }
+        
+        nav ul li a::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: var(--glow);
+            transition: width 0.3s;
+        }
+        
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        
+        .hero {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--glow);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+        
+        .price-display {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            margin: 2rem auto;
+            max-width: 300px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .price-display::before {
+            content: "LIVE";
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background-color: var(--error);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--glow);
+        }
+        
+        .price-change {
+            color: var(--error);
+            font-size: 0.9rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: transparent;
+            color: var(--glow);
+            border: 1px solid var(--glow);
+            text-decoration: none;
+            margin: 0.5rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            background-color: rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        
+        .btn-error {
+            color: var(--error);
+            border-color: var(--error);
+        }
+        
+        .btn-error:hover {
+            background-color: rgba(255, 0, 85, 0.1);
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
+        }
+        
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-disabled::after {
+            content: " [404]";
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+        
+        .card {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            position: relative;
+        }
+        
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                135deg,
+                transparent 0%,
+                rgba(0, 255, 255, 0.05) 50%,
+                transparent 100%
+            );
+            pointer-events: none;
+        }
+        
+        .card h3 {
+            color: var(--glow);
+            margin-bottom: 1rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .error-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--void);
+            border: 1px solid var(--error);
+            padding: 2rem;
+            max-width: 400px;
+            z-index: 100;
+            display: none;
+        }
+        
+        .error-popup h2 {
+            color: var(--error);
+            margin-bottom: 1rem;
+        }
+        
+        .error-popup p {
+            margin-bottom: 1.5rem;
+        }
+        
+        .error-popup .btn {
+            display: block;
+            text-align: center;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 99;
+            display: none;
+        }
+        
+        .static {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 0, 0, 0.15),
+                    rgba(0, 0, 0, 0.15) 1px,
+                    transparent 1px,
+                    transparent 2px
+                ),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="1" height="1" x="0" y="0" fill="rgba(0,255,255,0.05)"/></svg>');
+            background-size: auto, 10px 10px;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+            animation: static 0.2s infinite;
+        }
+        
+        @keyframes static {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-5px, 5px); }
+            40% { transform: translate(-5px, -5px); }
+            60% { transform: translate(5px, 5px); }
+            80% { transform: translate(5px, -5px); }
+            100% { transform: translate(0, 0); }
+        }
+        
+        .glitch-text {
+            animation: glitch-text 5s infinite;
+        }
+        
+        @keyframes glitch-text {
+            0%, 100% { text-shadow: 0 0 5px var(--glow); }
+            25% { text-shadow: -2px 0 5px var(--error); }
+            50% { text-shadow: 2px 0 5px var(--glow); }
+            75% { text-shadow: 0 -2px 5px var(--error); }
+        }
+        
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid var(--glow);
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: 2px;
+            animation: 
+                typing 3.5s steps(40, end),
+                blink-caret 0.75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--glow); }
+        }
+        
+        .corner-decoration {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-width: 2px;
+            border-style: solid;
+            border-color: transparent;
+            pointer-events: none;
+        }
+        
+        .top-left {
+            top: 10px;
+            left: 10px;
+            border-top-color: var(--glow);
+            border-left-color: var(--glow);
+        }
+        
+        .top-right {
+            top: 10px;
+            right: 10px;
+            border-top-color: var(--error);
+            border-right-color: var(--error);
+        }
+        
+        .bottom-left {
+            bottom: 10px;
+            left: 10px;
+            border-bottom-color: var(--error);
+            border-left-color: var(--error);
+        }
+        
+        .bottom-right {
+            bottom: 10px;
+            right: 10px;
+            border-bottom-color: var(--glow);
+            border-right-color: var(--glow);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            
+            header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            
+            nav ul {
+                margin-top: 1rem;
+                justify-content: center;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="static"></div>
+    
+    <div class="corner-decoration top-left"></div>
+    <div class="corner-decoration top-right"></div>
+    <div class="corner-decoration bottom-left"></div>
+    <div class="corner-decoration bottom-right"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="image-removebg-preview (3).png" alt="UNTOKENED Logo" class="logo-img">
+                <div class="logo-text glitch-effect" data-text="UNTOKENED">UNT<span>ØKENED</span>   COIN</div>
+            </div>
+            
+            <div class="top-right-links">
+                <button class="wallet-btn" id="connect-wallet">CONNECT WALLET</button>
+                <a href="https://x.com/untokenedotfun" class="social-link twitter" target="_blank">TWITTER</a>
+                <a href="https://x.com/untokenedotfun" class="social-link ca" target="_blank">CONTRACT</a>
+            </div>
+        </header>
+        
+        <main>
+            <section class="hero">
+                <h1 class="glitch-text">THE UNTOKENED COIN</h1>
+                <p class="subtitle typewriter">$UNTOKENED was never minted. Yet here it is.</p>
+                
+                <div class="price-display">
+                    <div class="price">$0.<span id="price-value">0000null</span></div>
+                    <div class="price-change" id="price-change">+0.00% (24h)</div>
+                </div>
+                
+                <div>
+                    <a href="https://x.com/untokenedotfun" class="btn btn-disabled" id="buy-btn">BUY </a>
+                    <a href="#" class="btn btn-error" id="access-btn">REQUEST ACCESS (AFTERD DEX)</a>
+                </div>
+            </section>
+            
+            <div class="terminal">
+                <p>> Initializing connection to UNTOKENED network...</p>
+                <p>> Establishing secure channel [0x0000null]</p>
+                <p>> ERROR: Contract address not found</p>
+                <p>> WARNING: Token supply returns null</p>
+                <p>> Define 'on-chain'</p>
+                <p>> A price that never forgets</p>
+                <p>> Download Failed: Whitepaper Not Found</p>
+                <p>> <span class="cursor">_</span></p>
+            </div>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3>THE PARADOX</h3>
+                    <p>You can't buy what was never minted. Yet here it is. A token that exists only as a memory leak in the blockchain's subconscious.</p>
+                </div>
+                
+                <div class="card">
+                    <h3>BLACKSITE LEAK</h3>
+                    <p>Classified documents suggest $UNTOKENED was a failed experiment in quantum tokenomics. The project was terminated. So why is it still trading?</p>
+                </div>
+                
+                <div class="card">
+                    <h3>NULL SUPPLY</h3>
+                    <p>Total supply: 0. Circulating supply: undefined. Market cap: unknown. These numbers shouldn't exist. And yet they persist.</p>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>THE UNTOKENED COIN IS NOT AN ACTUAL TOKEN. OR IS IT? [DISCLAIMER: 0x0000null]</p>
+            <p>This interface is a conceptual artifact. Any resemblance to actual tokens is coincidental.</p>
+        </footer>
+    </div>
+    
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="error-popup" id="error-popup">
+        <h2>ACCESS DENIED</h2>
+        <p>You are attempting to interact with a non-existent asset. The token you are trying to access was never minted.</p>
+        <p>This interface is provided for archival purposes only.</p>
+        <a href="#" class="btn" id="close-popup">ACKNOWLEDGE</a>
+    </div>
+    
+    <script>
+        // Simulate price fluctuations
+        function updatePrice() {
+            const baseValue = 0.0000;
+            const fluctuation = (Math.random() * 0.0004).toFixed(4);
+            const newValue = (baseValue + parseFloat(fluctuation)).toFixed(4);
+            
+            document.getElementById('price-value').textContent = newValue.substring(2);
+            
+            // Random price change indicator
+            const change = (Math.random() * 20 - 10).toFixed(2);
+            const changeElement = document.getElementById('price-change');
+            
+            if (change > 0) {
+                changeElement.textContent = `+${change}% (24h)`;
+                changeElement.style.color = '#0f0';
+            } else {
+                changeElement.textContent = `${change}% (24h)`;
+                changeElement.style.color = '#f00';
+            }
+            
+            // Random glitch effect
+            if (Math.random() > 0.7) {
+                document.body.classList.add('glitch');
+                setTimeout(() => {
+                    document.body.classList.remove('glitch');
+                }, 200);
+            }
+        }
+        
+        // Update price every 3 seconds
+        setInterval(updatePrice, 3000);
+        updatePrice(); // Initial call
+        
+        // Error popup interaction
+        document.getElementById('access-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('error-popup').style.display = 'block';
+        });
+        
+        document.getElementById('close-popup').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('error-popup').style.display = 'none';
+        });
+        
+        // Wallet connection simulation
+        document.getElementById('connect-wallet').addEventListener('click', function() {
+            const walletBtn = this;
+            walletBtn.textContent = "CONNECTING...";
+            walletBtn.disabled = true;
+            
+            setTimeout(() => {
+                // Simulate failed connection
+                walletBtn.textContent = "ERROR: NO TOKEN FOUND";
+                walletBtn.style.color = '#f05';
+                walletBtn.style.borderColor = '#f05';
+                
+                // Add error message to terminal
+                const terminal = document.querySelector('.terminal');
+                const errorMsg = document.createElement('p');
+                errorMsg.textContent = "> WALLET CONNECTION FAILED: No token contract found";
+                errorMsg.style.color = '#f05';
+                
+                const cursor = terminal.querySelector('.cursor');
+                terminal.insertBefore(errorMsg, cursor);
+                terminal.scrollTop = terminal.scrollHeight;
+                
+                // Reset button after delay
+                setTimeout(() => {
+                    walletBtn.textContent = "CONNECT WALLET";
+                    walletBtn.style.color = '';
+                    walletBtn.style.borderColor = '';
+                    walletBtn.disabled = false;
+                }, 3000);
+            }, 1500);
+        });
+        
+        // Contract address interaction
+        document.getElementById('contract-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Add error message to terminal
+            const terminal = document.querySelector('.terminal');
+            const errorMsg = document.createElement('p');
+            errorMsg.textContent = "> CONTRACT ADDRESS: 0x0000000000000000000000000000000000000000";
+            errorMsg.style.color = '#0ff';
+            
+            const cursor = terminal.querySelector('.cursor');
+            terminal.insertBefore(errorMsg, cursor);
+            terminal.scrollTop = terminal.scrollHeight;
+            
+            // Create popup notification
+            const notification = document.createElement('div');
+            notification.textContent = 'CONTRACT ADDRESS COPIED: NULL ADDRESS';
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.left = '50%';
+            notification.style.transform = 'translateX(-50%)';
+            notification.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            notification.style.color = '#0ff';
+            notification.style.padding = '10px 20px';
+            notification.style.border = '1px solid #0ff';
+            notification.style.borderRadius = '4px';
+            notification.style.zIndex = '1000';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 500);
+            }, 2000);
+        });
+        
+        // Disabled button effects
+        const disabledButtons = document.querySelectorAll('.btn-disabled');
+        disabledButtons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Create error message element
+                const errorMsg = document.createElement('div');
+                errorMsg.textContent = 'ERROR: RESOURCE NOT FOUND';
+                errorMsg.style.position = 'fixed';
+                errorMsg.style.bottom = '20px';
+                errorMsg.style.left = '50%';
+                errorMsg.style.transform = 'translateX(-50%)';
+                errorMsg.style.backgroundColor = 'rgba(255, 0, 85, 0.2)';
+                errorMsg.style.color = '#fff';
+                errorMsg.style.padding = '10px 20px';
+                errorMsg.style.border = '1px solid #f05';
+                errorMsg.style.zIndex = '1000';
+                errorMsg.style.animation = 'glitch-text 1s infinite';
+                
+                document.body.appendChild(errorMsg);
+                
+                setTimeout(() => {
+                    errorMsg.style.opacity = '0';
+                    setTimeout(() => {
+                        document.body.removeChild(errorMsg);
+                    }, 500);
+                }, 2000);
+            });
+        });
+        
+        // Random terminal effects
+        const terminal = document.querySelector('.terminal');
+        setInterval(() => {
+            if (Math.random() > 0.8) {
+                terminal.style.borderColor = '#f05';
+                setTimeout(() => {
+                    terminal.style.borderColor = '#333';
+                }, 300);
+            }
+        }, 5000);
+        
+        // Navigation effects
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Create error message
+                const errorText = document.createElement('p');
+                errorText.textContent = `> ERROR: ${this.textContent} SECTION NOT FOUND`;
+                errorText.style.color = '#f05';
+                errorText.style.marginTop = '10px';
+                errorText.style.animation = 'glitch 0.5s';
+                
+                // Append to terminal
+                const cursor = terminal.querySelector('.cursor');
+                terminal.insertBefore(errorText, cursor);
+                
+                // Scroll terminal to bottom
+                terminal.scrollTop = terminal.scrollHeight;
+            });
+        });
+        
+        // Random body glitch
+        setInterval(() => {
+            if (Math.random() > 0.9) {
+                document.body.style.transform = 'translateX(2px)';
+                setTimeout(() => {
+                    document.body.style.transform = 'translateX(0)';
+                }, 50);
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
